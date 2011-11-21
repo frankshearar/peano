@@ -18,7 +18,7 @@ module Peano
       when 0 then Zero.new
       when 1..MAX_INT then Succ.new(from_i(integer - 1))
     else
-      raise "Peano arithmetic only defined over the range [0, #{MAX_INT.to_s}]"
+      raise "Peano arithmetic only defined over the range [0, #{MAX_INT.to_s}]. You gave #{integer.inspect}."
     end
   end
 
