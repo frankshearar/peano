@@ -3,7 +3,8 @@ require 'rantly/property'
 require 'shoulda'
 
 class Rantly
-  def peano(limit)
+  def peano(limit = nil)
+    limit = 0..Peano::MAX_INT if limit.nil?
     Peano.from_i(integer(limit))
   end
 end
