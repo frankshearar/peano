@@ -15,7 +15,7 @@ module Peano
       property_of {
         peano(1..100)
       }.check { |n|
-        assert(Peano.zero < n, "Zero >= #{n.inspect}")
+        assert(Peano.zero < n, "Zero >= #{n.to_s}")
       }
     end
 
@@ -42,7 +42,7 @@ module Peano
         i = integer(1..Peano::MAX_INT)
         [i, i-1].map{|n| Peano.from_i(n)}
       }.check {|n, pred_n|
-        assert(pred_n < n, "#{pred_n.inspect} >= #{n.inspect}")
+        assert(pred_n < n, "#{pred_n.to_s} >= #{n.to_s}")
       }
     end
 
@@ -51,7 +51,7 @@ module Peano
         i = range(0, Peano::MAX_INT - 1)
         [i, i+1].map{|n| Peano.from_i(n)} 
       }.check { |n, succ_n|
-         assert(n < succ_n, "#{n.inspect} >= #{succ_n.inspect}")
+         assert(n < succ_n, "#{n.to_s} >= #{succ_n.to_s}")
       }
     end
 
