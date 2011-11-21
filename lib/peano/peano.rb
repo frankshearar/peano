@@ -27,16 +27,32 @@ module Peano
       raise ":< not defined for #{self.class.name}"
     end
 
+    def == (obj)
+      raise ":== not defined for #{self.class.name}"
+    end
+
+    def + (obj)
+      raise ":+ not defined for #{self.class.name}"
+    end
+
     def pred
       raise ":pred not defined for #{self.class.name}"
     end
 
     def succ
-      raise ":succ not defined for #{self.class.name}"
+      Succ.new(self)
+    end
+
+    def zero?
+      false
     end
   end
 
   class Zero < PNumber
+    def to_s
+      'Z'
+    end
+
     def inspect
       "#<Zero>"
     end
@@ -45,37 +61,62 @@ module Peano
       not obj.kind_of?(Zero)
     end
 
+    def ==(peano)
+      peano.zero?
+    end
+
+    def +(peano)
+      case peano
+        when Zero then self
+      else
+        peano
+      end
+    end
+
+    def zero?
+      true
+    end
+
     def pred
       raise NoPredError.new
     end
 
-    def succ
-      Succ.new(self)
-    end
-    
     def to_i
       0
     end
   end
-  
+
   class Succ < PNumber
     attr_reader :pred
 
     def initialize(pred)
       @pred = pred
     end
+
+    def to_s
+      "S(#{pred.to_s})"
+    end
+
     def inspect
-      "#<Succ #{@pred}>"
+      "#<Succ #{@pred.inspect}>"
     end
 
     def <(obj)
       pred < obj.pred
     end
 
-    def succ
-      Succ.new(self)
+    def ==(peano)
+      !peano.nil? and self.pred == peano.pred
     end
-    
+
+    def +(peano)
+      case peano
+      when Zero then self
+      else
+        self.succ + peano.pred
+      end
+    end
+
     def to_i
       @pred.to_i + 1
     end
