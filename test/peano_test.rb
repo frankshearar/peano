@@ -108,17 +108,5 @@ module Peano
         numbers.reduce(:+).should == (numbers.map{|p| p.to_i}.reduce(:+))
       }
     end
-
-    # it "should wtf" do
-    #   flag = true
-    #   property_of {
-    #     [sized(3) {array {peano(0..5)}}, sized(10) {array {peano(0)}}]
-    #   }.check {|thing|
-    #     if flag then
-    #       flag = false
-    #       puts "#{thing[0].size} #{thing[1].size}"
-    #     end
-    #   }
-    # end
   end
 end
