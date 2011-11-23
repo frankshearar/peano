@@ -43,7 +43,7 @@ module Peano
 
     it "should succ(pred(n)) == n" do
       property_of {
-        peano(1..Peano::MAX_INT)
+        peano(0..Peano::MAX_INT - 1)
       }.check {|n|
         n.succ.pred.should == n
       }
