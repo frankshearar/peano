@@ -1,0 +1,1 @@
+A very simple implementation of (a small subset of) Peano numbers, as an exercise in exploring [rantly](https://github.com/hayeah/rantly).
