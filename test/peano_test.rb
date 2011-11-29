@@ -87,6 +87,14 @@ module Peano
       property_of {
         PNumber.generator(0..Peano::MAX_INT - 1)
       }.check {|n|
+        n.succ.should > n
+      }
+    end
+
+    it "should n < succ(n)" do
+      property_of {
+        PNumber.generator(0..Peano::MAX_INT - 1)
+      }.check {|n|
         n.should < n.succ
       }
     end
@@ -97,6 +105,7 @@ module Peano
         [i, range(0, i - 1)].map{|n| Peano.from_i(n)}
       }.check {|i, less_than_i|
         less_than_i.should < i
+        i.should_not < less_than_i
       }
     end
 
@@ -119,7 +128,7 @@ module Peano
         j = PNumber.generator(0..Peano::MAX_INT / 2)
         [i, j]
       }.check {|i, j|
-        (i + j).to_i.should == (i + j)
+        (i + j).to_i.should == (i.to_i + j.to_i)
       }
     end
 
@@ -129,7 +138,24 @@ module Peano
           array { PNumber.generator(0..Peano::MAX_INT / 10) }
         }
       }.check {|numbers|
-        numbers.reduce(:+).should == (numbers.map{|p| p.to_i}.reduce(:+))
+        numbers.reduce(:+).to_i.should == (numbers.map{|p| p.to_i}.reduce(:+))
+      }
+    end
+
+    it "should define == like the integers" do
+      property_of {
+        PNumber.generator(0..10)
+      }.check {|n|
+        n.should == n
+      }
+
+      property_of {
+        i = integer(0..10)
+        j = integer(0..10)
+        guard i != j
+        [i, j].map {|n| Peano.from_i(n)}
+      }.check {|i, j|
+        i.should_not == j
       }
     end
   end

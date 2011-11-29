@@ -102,11 +102,25 @@ module Peano
     end
 
     def <(obj)
-      pred < obj.pred
+      case obj
+        when Zero then false
+        when Succ then pred < obj.pred
+      else
+        raise "< not defined for (Succ, #{obj.class.name})"
+      end
+    end
+
+    def >(peano)
+      not (self == peano) and not (self < peano)
     end
 
     def ==(peano)
-      !peano.nil? and self.pred == peano.pred
+      return false if peano.nil?
+
+      case peano
+        when Zero then false
+        when Succ then self.pred == peano.pred
+      end
     end
 
     def +(peano)
