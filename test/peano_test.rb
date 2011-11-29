@@ -13,6 +13,7 @@ class Rantly
     limit = 0..Peano::MAX_INT if limit.nil?
     Peano.from_i(integer(limit))
   end
+end
 
 module Peano
   class PNumber
@@ -106,6 +107,16 @@ module Peano
       }.check {|i, less_than_i|
         less_than_i.should < i
         i.should_not < less_than_i
+      }
+    end
+
+    it "should define > as integer's >" do
+      property_of {
+        i = range(1, Peano::MAX_INT - 1)
+        [i, range(i + 1, Peano::MAX_INT)].map{|n| Peano.from_i(n)}
+      }.check {|i, more_than_i|
+        more_than_i.should > i
+        i.should_not > more_than_i
       }
     end
 

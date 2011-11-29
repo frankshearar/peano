@@ -31,6 +31,10 @@ module Peano
       raise ":== not defined for #{self.class.name}"
     end
 
+    def > (peano)
+      raise ":> not defined for #{self.class.name}"
+    end
+
     def + (obj)
       raise ":+ not defined for #{self.class.name}"
     end
@@ -59,6 +63,10 @@ module Peano
 
     def <(obj)
       not obj.kind_of?(Zero)
+    end
+
+    def >(obj)
+      false
     end
 
     def ==(peano)
