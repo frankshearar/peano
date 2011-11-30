@@ -12,9 +12,18 @@ end
 
 module Peano
   class PNumber
+    @cache
     def self.generator(limit = nil)
       limit = 0..1000 if limit.nil?
-      Peano.from_i(Rantly.gen.integer(limit))
+      get(Rantly.gen.integer(limit))
+    end
+
+    private
+    def self.get(int)
+      @cache = Hash.new if @cache.nil?
+      @cache.fetch(int) {
+        @cache[int] = Peano.from_i(int)
+      }
     end
   end
 end

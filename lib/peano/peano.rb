@@ -1,16 +1,6 @@
 require 'peano/trampoline'
 
 module Peano
-  class PeanoError < Exception
-  end
-
-  class UndefinedOp < PeanoError
-    def initialize(op_name, *operands)
-      classes = ([self.class.name] + operands.map {|o| o.class.name}).join(", ")
-      super("#{op_name.to_s} not defined for (#{classes})")
-    end
-  end
-
   def self.zero
     Zero.new
   end
@@ -25,15 +15,6 @@ module Peano
     end
   end
 
-  # Tail recursive helper for from_i
-  def self.make_succ(integer, base = Zero.new)
-    if integer > 0 then
-      ->{make_succ(integer - 1, Succ.new(base))}
-    else
-      base
-    end
-  end
-
   class PNumber
     def < (peano)
       Trampoline.new.run {self.less_than(peano)}
@@ -43,24 +24,16 @@ module Peano
       Trampoline.new.run {self.equals(peano)}
     end
 
+    def hash
+      to_i
+    end
+
     def >(peano)
       not (self == peano) and not (self < peano)
     end
 
-    def equals(peano)
-      raise UndefinedOp.new(:==, peano)
-    end
-
-    def less_than(peano)
-      raise UndefinedOp.new(:>, peano)
-    end
-
     def +(peano)
       Trampoline.new.run {self.plus(peano)}
-    end
-
-    def plus(peano)
-      raise UndefinedOp.new(:+, peano)
     end
 
     def inv
@@ -77,6 +50,18 @@ module Peano
 
     def zero?
       false
+    end
+
+    def equals(peano)
+      raise UndefinedOp.new(:==, peano)
+    end
+
+    def less_than(peano)
+      raise UndefinedOp.new(:>, peano)
+    end
+
+    def plus(peano)
+      raise UndefinedOp.new(:+, peano)
     end
   end
 
@@ -234,6 +219,25 @@ module Peano
 
     def to_i
       - @inverse.to_i
+    end
+  end
+
+  class PeanoError < Exception
+  end
+
+  class UndefinedOp < PeanoError
+    def initialize(op_name, *operands)
+      classes = ([self.class.name] + operands.map {|o| o.class.name}).join(", ")
+      super("#{op_name.to_s} not defined for (#{classes})")
+    end
+  end
+
+  # Tail recursive helper for from_i
+  def self.make_succ(integer, base = Zero.new)
+    if integer > 0 then
+      ->{make_succ(integer - 1, Succ.new(base))}
+    else
+      base
     end
   end
 end
