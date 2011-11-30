@@ -7,6 +7,11 @@ module Peano
   end
 
   class NoPredError < PeanoError
+  class UndefinedOp < PeanoError
+    def initialize(op_name, *operands)
+      classes = ([self.class.name] + operands.map {|o| o.class.name}).join(", ")
+      super("#{op_name.to_s} not defined for (#{classes})")
+    end
   end
 
   def self.zero
@@ -23,24 +28,26 @@ module Peano
   end
 
   class PNumber
-    def < (obj)
-      raise ":< not defined for #{self.class.name}"
+    def < (peano)
+      raise UndefinedOp.new(:<, peano)
     end
 
-    def == (obj)
-      raise ":== not defined for #{self.class.name}"
+    def == (peano)
+      raise UndefinedOp.new(:==, peano)
     end
 
     def > (peano)
-      raise ":> not defined for #{self.class.name}"
+      raise UndefinedOp.new(:>, peano)
     end
 
-    def + (obj)
-      raise ":+ not defined for #{self.class.name}"
+    def + (peano)
+      raise UndefinedOp.new(:+, peano)
+    end
+
     end
 
     def pred
-      raise ":pred not defined for #{self.class.name}"
+      raise UndefinedOp.new(:pred)
     end
 
     def succ
@@ -109,12 +116,11 @@ module Peano
       "#<Succ #{@pred.inspect}>"
     end
 
-    def <(obj)
-      case obj
+    def <(peano)
+      case peano
         when Zero then false
-        when Succ then pred < obj.pred
-      else
-        raise "< not defined for (Succ, #{obj.class.name})"
+        when Succ then pred < peano.pred
+        else super
       end
     end
 
@@ -128,6 +134,7 @@ module Peano
       case peano
         when Zero then false
         when Succ then self.pred == peano.pred
+        else super
       end
     end
 
