@@ -1,12 +1,9 @@
-module Peano
-  # Lack of tail call elimination means stack-blowing. So we artificially
-  # limit the domain of discourse.
-  MAX_INT = 1000
+require 'peano/trampoline'
 
+module Peano
   class PeanoError < Exception
   end
 
-  class NoPredError < PeanoError
   class UndefinedOp < PeanoError
     def initialize(op_name, *operands)
       classes = ([self.class.name] + operands.map {|o| o.class.name}).join(", ")
@@ -19,31 +16,55 @@ module Peano
   end
 
   def self.from_i(integer)
-    case integer
-      when 0 then Zero.new
-      when 1..MAX_INT then Succ.new(from_i(integer - 1))
+    if (integer < 0) then
+      Inv.new(Trampoline.new.run { make_succ(-integer) })
+    elsif (integer > 0) then
+      Trampoline.new.run { make_succ(integer) }
     else
-      raise "Peano arithmetic only defined over the range [0, #{MAX_INT.to_s}]. You gave #{integer.inspect}."
+      Zero.new
+    end
+  end
+
+  # Tail recursive helper for from_i
+  def self.make_succ(integer, base = Zero.new)
+    if integer > 0 then
+      ->{make_succ(integer - 1, Succ.new(base))}
+    else
+      base
     end
   end
 
   class PNumber
     def < (peano)
-      raise UndefinedOp.new(:<, peano)
+      Trampoline.new.run {self.less_than(peano)}
     end
 
-    def == (peano)
+    def ==(peano)
+      Trampoline.new.run {self.equals(peano)}
+    end
+
+    def >(peano)
+      not (self == peano) and not (self < peano)
+    end
+
+    def equals(peano)
       raise UndefinedOp.new(:==, peano)
     end
 
-    def > (peano)
+    def less_than(peano)
       raise UndefinedOp.new(:>, peano)
     end
 
-    def + (peano)
+    def +(peano)
+      Trampoline.new.run {self.plus(peano)}
+    end
+
+    def plus(peano)
       raise UndefinedOp.new(:+, peano)
     end
 
+    def inv
+      Inv.new(self)
     end
 
     def pred
@@ -68,7 +89,7 @@ module Peano
       "#<Zero>"
     end
 
-    def <(obj)
+    def less_than(obj)
       not obj.kind_of?(Zero)
     end
 
@@ -76,11 +97,11 @@ module Peano
       false
     end
 
-    def ==(peano)
+    def equals(peano)
       peano.zero?
     end
 
-    def +(peano)
+    def plus(peano)
       case peano
         when Zero then self
       else
@@ -92,8 +113,12 @@ module Peano
       true
     end
 
+    def inv
+      self
+    end
+
     def pred
-      raise NoPredError.new
+      Inv.new(Succ.new(self))
     end
 
     def to_i
@@ -116,38 +141,99 @@ module Peano
       "#<Succ #{@pred.inspect}>"
     end
 
-    def <(peano)
+    def less_than(peano)
       case peano
         when Zero then false
-        when Succ then pred < peano.pred
+        when Succ then ->{pred.less_than(peano.pred)}
+        when Inv then false
         else super
       end
     end
 
-    def >(peano)
-      not (self == peano) and not (self < peano)
-    end
-
-    def ==(peano)
-      return false if peano.nil?
-
+    def equals(peano)
       case peano
         when Zero then false
-        when Succ then self.pred == peano.pred
+        when Succ then ->{pred.equals(peano.pred)}
+        when Inv then false
         else super
       end
     end
 
-    def +(peano)
+    def plus(peano)
       case peano
-      when Zero then self
-      else
-        self.succ + peano.pred
+        when Zero then self
+        when Succ then ->{succ.plus(peano.pred)}
+        when Inv then ->{pred.plus(peano.succ)}
+        else super
       end
     end
 
     def to_i
       @pred.to_i + 1
+    end
+  end
+
+  # I represent the inverse of a number.
+  # Inv(Zero) == Zero, Inv(Inv(apnumber)) == apnumber
+  class Inv < PNumber
+    attr_reader :inverse
+
+    def initialize(inverse)
+      # inverse is, of course, the inverse of self.
+      # Or, self is the inverse of inverse!
+
+      @inverse = inverse
+    end
+
+    def to_s
+      "I(#{inverse.to_s})"
+    end
+
+    def inspect
+      "#<Inv #{@inverse.inspect}>"
+    end
+
+    def inv
+      @inverse
+    end
+
+    def equals(peano)
+      case peano
+        when Zero then false
+        when Succ then false
+      when Inv then ->{inv.equals(peano.inverse)}
+        else super
+      end
+    end
+
+    def less_than(peano)
+      case peano
+        when Zero then true
+        when Succ then true
+        when Inv then inverse > peano.inverse
+      else super
+      end
+    end
+
+    def plus(peano)
+      case peano
+        when Zero then self
+        when Succ then ->{succ.plus(peano.pred)}
+        when Inv then ->{Inv.new(inverse.plus(peano.inverse))}
+        else super
+      end
+    end
+
+    def pred
+      Inv.new(inverse.succ)
+    end
+
+    def succ
+      Inv.new(inverse.pred)
+    end
+
+    def to_i
+      - @inverse.to_i
     end
   end
 end
