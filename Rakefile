@@ -6,7 +6,7 @@ require 'rspec/core/rake_task'
 # rubygems
 # rake
 # rantly
-#rspec
+# rspec
 
 require 'rake/testtask'
 RSpec::Core::RakeTask.new(:test) do |test|
