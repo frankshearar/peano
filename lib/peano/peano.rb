@@ -66,6 +66,10 @@ module Peano
   end
 
   class Zero < PNumber
+    def to_i
+      0
+    end
+
     def to_s
       'Z'
     end
@@ -88,10 +92,6 @@ module Peano
 
     def pred
       Inv.new(Succ.new(self))
-    end
-
-    def to_i
-      0
     end
 
     def __less_than(obj)
