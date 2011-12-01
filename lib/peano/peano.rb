@@ -1,5 +1,23 @@
 require 'peano/trampoline'
 
+# A basic implementation of Peano numbers.
+#
+# That is, Peano numbers plus inverses, yielding the group of
+# integers under +.
+#
+# The various algorithms make extensive use of recursion, this
+# being the most natural way to define operations on a recursive
+# structure. Since Ruby doesn't support tail call removal (despite
+# certain _implementations_ supporting same), we use a trampoline.
+# We implement algorithms as a method with a nice name trampolining
+# a helper method which either returns a value (a/the base case for
+# the recursion), or a Proc. This turns a tail recursive algorithm
+# into an iterative - hence constant space - algorithm.
+#
+# Note too the many type-switching case statements. Ruby doesn't
+# support multimethods/generic functions, hence we need to implement
+# the double dispatch ourselves.
+
 module Peano
   def self.zero
     Zero.new
