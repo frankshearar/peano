@@ -37,7 +37,7 @@ module Peano
     end
 
     def inv
-      Inv.new(self)
+      raise UndefinedOp.new(:inv)
     end
 
     def pred
@@ -128,6 +128,10 @@ module Peano
 
     def inspect
       "#<Succ #{@pred.inspect}>"
+    end
+
+    def inv
+      Inv.new(self)
     end
 
     def __less_than(peano)
