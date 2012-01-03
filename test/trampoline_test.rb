@@ -1,5 +1,4 @@
 require 'peano/trampoline'
-require 'peano/rspec-ext'
 require 'rantly/property'
 require 'rspec'
 
