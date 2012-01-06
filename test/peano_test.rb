@@ -70,6 +70,14 @@ module Peano
       }
     end
 
+    it "should not 0 > n for Inv" do
+      property_of {
+        PNumber.generator(1..100).inv
+      }.check { |n|
+        Peano.zero.should_not < n
+      }
+    end
+
     it "should succ(pred(n)) == n" do
       property_of {
         PNumber.generator

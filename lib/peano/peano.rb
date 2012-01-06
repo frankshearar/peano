@@ -113,7 +113,11 @@ module Peano
     end
 
     def __less_than(obj)
-      not obj.kind_of?(Zero)
+      case obj
+        when Zero then false
+        when Succ then true
+        when Inv then false
+      end
     end
 
     def __equals(peano)
