@@ -217,7 +217,10 @@ module Peano
     end
 
     def succ
-      Inv.new(inverse.pred)
+      # -1's succ is 0, not -1.
+      p = inverse.pred
+      return p if p.zero?
+      Inv.new(p)
     end
 
     def __equals(peano)

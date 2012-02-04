@@ -86,6 +86,14 @@ module Peano
       }
     end
 
+    it "should pred(succ(n)) == n" do
+      property_of {
+        PNumber.generator
+      }.check {|n|
+        n.pred.succ.should == n
+      }
+    end
+
     it "should pred(n) < n like integer's <" do
       property_of {
         i = integer(1..1000)
@@ -206,6 +214,14 @@ module Peano
       }.check {|i, j|
         i.should_not == j
       }
+    end
+
+    it "should have succ(-1) == 0" do
+      Inv.new(Succ.new(Peano.zero)).succ.should == Peano.zero
+    end
+
+    it "should pred(1) == 0" do
+      Succ.new(Peano.zero).pred.should == Peano.zero
     end
   end
 end
