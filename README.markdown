@@ -1,4 +1,10 @@
-A very simple implementation of (a small subset of) Peano numbers, as an exercise in exploring [rantly](https://github.com/hayeah/rantly).
+What started as a very simple implementation of (a small subset of) Peano numbers, as an exercise in exploring [rantly](https://github.com/hayeah/rantly).
+
+By adding inverses to the Peano numbers, we implement the group of integers under +.
+
+A trampoline allows us to express the natural recursive definitions in constant space.
+
+We violate standard OO doctrine and switch on types to concentrate the various algorithms each in one place.
 
 Licence
 -------
