@@ -8,6 +8,8 @@ require 'rspec/core/rake_task'
 # rantly
 # rspec
 
+task :default => :test
+
 require 'rake/testtask'
 RSpec::Core::RakeTask.new(:test) do |test|
   test.pattern = 'test/**/*_test.rb'
