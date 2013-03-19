@@ -22,7 +22,7 @@ module Peano
       }.should raise_error("this is an exception")
     end
 
-    it "shoulld pass exceptions raised inside recursion" do
+    it "should pass exceptions raised inside recursion" do
       ->{
         Trampoline.new.run { TrampolineTest.new.raise_when_zero(10)}
       }.should raise_error("Zero!")
