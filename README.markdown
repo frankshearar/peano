@@ -6,6 +6,10 @@ A trampoline allows us to express the natural recursive definitions in constant 
 
 We violate standard OO doctrine and switch on types to concentrate the various algorithms each in one place.
 
+Status
+------
+[![Build Status](https://secure.travis-ci.org/frankshearar/peano.png?branch=master)](http://travis-ci.org/frankshearar/peano) [![Coverage Status](https://coveralls.io/repos/frankshearar/zipr/badge.png?branch=master)](https://coveralls.io/r/frankshearar/zipr)
+
 Licence
 -------
 

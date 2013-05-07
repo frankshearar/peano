@@ -1,3 +1,4 @@
+require_relative 'test_helper'
 require 'peano/peano'
 require 'rantly/property'
 require 'rspec'
@@ -222,6 +223,10 @@ module Peano
 
     it "should pred(1) == 0" do
       Succ.new(Peano.zero).pred.should == Peano.zero
+    end
+
+    it "should have Invs == when their calculated values are ==" do
+      Inv.new(Succ.new(Peano.zero)).should == Succ.new(Peano.zero.pred.pred)
     end
   end
 end

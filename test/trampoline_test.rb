@@ -1,3 +1,4 @@
+require_relative 'test_helper'
 require 'peano/trampoline'
 require 'rantly/property'
 require 'rspec'
